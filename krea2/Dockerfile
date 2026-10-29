@@ -26,6 +26,8 @@ RUN set -eux; \
         https://github.com/aitrepreneur/ComfyUI-KreaImageAspectPreserve \
         https://github.com/aitrepreneur/ComfyUI-KreaAspectPreserveOutpaint \
         https://github.com/aitrepreneur/ComfyUI-DefaultGreenMaskColor \
+        https://github.com/ostris/ComfyUI-Krea2-Ostris-Edit \
+        https://github.com/lbouaraba/comfyui-krea2edit \
     ; do \
         name="$(basename "$repo" .git)"; \
         if ! git clone --depth 1 "$repo" "$name"; then echo "WARN: clone failed for $repo (skipping)"; continue; fi; \
