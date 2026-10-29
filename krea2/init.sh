@@ -19,6 +19,13 @@ else
   echo "init: WARNING /runpod-volume is NOT mounted - models will be missing"
 fi
 
+# The volume's own symlinks (character LoRAs live as links into /workspace/output/...) assume the
+# volume is mounted at /workspace, which is how pods see it. Serverless mounts it at /runpod-volume,
+# so give /workspace back or every such link dangles and ComfyUI silently hides the file.
+if [ ! -e /workspace ] && [ -d /runpod-volume ]; then
+  ln -s /runpod-volume /workspace && echo "init: linked /workspace -> /runpod-volume"
+fi
+
 if [ -d "$SRC" ]; then
   mkdir -p "$DST"
   # worker type  :  our ComfyUI folder
@@ -38,6 +45,7 @@ if [ -d "$SRC" ]; then
     fi
   done
   echo "init: model dirs visible: $(ls -1 "$DST" 2>/dev/null | tr '\n' ' ')"
+  echo "init: loras visible: $(ls -1 "$SRC/loras" 2>/dev/null | head -12 | tr '\n' ' ')"
 else
   echo "init: WARNING $SRC not found - check the volume mount and VOL_STACK"
 fi
