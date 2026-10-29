@@ -32,7 +32,11 @@ RUN set -eux; \
         sed -i 's/^matrix-client==0\.4\.0/# matrix-client disabled for headless worker/' \
             "$name/requirements.txt" 2>/dev/null || true; \
         if [ -f "$name/requirements.txt" ]; then \
-            pip install -r "$name/requirements.txt" || echo "WARN: deps for $name failed (continuing)"; \
+            grep -viE '^(rembg|transparent-background|pixeloe|numba|colour-science)' \
+                "$name/requirements.txt" > "$name/req.filtered" || true; \
+            pip install --only-binary=:all: -r "$name/req.filtered" \
+                || pip install -r "$name/req.filtered" \
+                || echo "WARN: deps for $name failed (continuing)"; \
         fi; \
     done; \
     git -C ComfyUI-Manager rev-parse --short HEAD || true
