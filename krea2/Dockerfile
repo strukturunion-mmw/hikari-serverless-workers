@@ -23,13 +23,12 @@ RUN set -eux; \
         https://github.com/kijai/ComfyUI-KJNodes.git \
         https://github.com/cubiq/ComfyUI_essentials.git \
         https://github.com/RamonGuthrie/ComfyUI-RBG-SmartSeedVariance.git \
-        https://github.com/capitan01R/ComfyUI-Krea2T-Enhancer.git \
         https://github.com/aitrepreneur/ComfyUI-KreaImageAspectPreserve \
         https://github.com/aitrepreneur/ComfyUI-KreaAspectPreserveOutpaint \
         https://github.com/aitrepreneur/ComfyUI-DefaultGreenMaskColor \
     ; do \
         name="$(basename "$repo" .git)"; \
-        git clone --depth 1 "$repo" "$name"; \
+        if ! git clone --depth 1 "$repo" "$name"; then echo "WARN: clone failed for $repo (skipping)"; continue; fi; \
         sed -i 's/^matrix-client==0\.4\.0/# matrix-client disabled for headless worker/' \
             "$name/requirements.txt" 2>/dev/null || true; \
         if [ -f "$name/requirements.txt" ]; then \
