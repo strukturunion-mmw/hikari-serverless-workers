@@ -38,6 +38,12 @@ RUN set -eux; \
         fi; \
     done
 
+# worker-comfyui collects node outputs only from "images"; VHS_VideoCombine (our only output node)
+# reports its mp4 under "gifs", so a finished render returns success_no_images. patch_handler.py
+# rewrites that one branch and fails the build if the handler layout moves.
+COPY patch_handler.py /patch_handler.py
+RUN python3 /patch_handler.py
+
 COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
